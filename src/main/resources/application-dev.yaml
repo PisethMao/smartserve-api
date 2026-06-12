@@ -11,6 +11,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    open-in-view: false
   sql:
     init:
       mode: never
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    disable-swagger-default-url: true
+scalar:
+  enabled: true
+  path: /scalar
+  url: /v3/api-docs
+  page-title: SmartServe API Reference
