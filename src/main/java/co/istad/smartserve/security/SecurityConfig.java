@@ -22,6 +22,7 @@ public class SecurityConfig {
                         "/scalar/**"
                 ).permitAll()
                 .requestMatchers("/api/v1/restaurants/**").permitAll()
+                .requestMatchers("/api/v1/categories/**").permitAll()
                 .anyRequest().authenticated()
         );
         return http.build();
