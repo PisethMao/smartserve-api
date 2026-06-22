@@ -29,7 +29,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleConflict(
+            ConflictException ex,
+            HttpServletRequest request
+    ) {
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorResponse response = new ErrorResponse(
                 Instant.now(),
@@ -37,7 +40,7 @@ public class GlobalExceptionHandler {
                 status.getReasonPhrase(),
                 ex.getMessage(),
                 request.getRequestURI(),
-                null
+                ex.getValidationErrors()
         );
         return ResponseEntity.status(status).body(response);
     }
@@ -52,7 +55,7 @@ public class GlobalExceptionHandler {
                         FieldError::getField,
                         fieldError -> fieldError.getDefaultMessage() == null
                                 ? "Invalid value" : fieldError.getDefaultMessage(),
-                        (first, second) -> first
+                        (first, _) -> first
                 ));
         ErrorResponse response = new ErrorResponse(
                 Instant.now(),
