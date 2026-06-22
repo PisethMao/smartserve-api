@@ -29,12 +29,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
             Integer displayOrder
     );
 
-    boolean existsByRestaurant_IdAndDisplayOrderAndIdNotAndDeletedFalse(
-            UUID restaurantId,
-            Integer displayOrder,
-            UUID categoryId
-    );
-
     @Query("""
             select coalesce(max(c.displayOrder), 0) + 1
             from Category c
