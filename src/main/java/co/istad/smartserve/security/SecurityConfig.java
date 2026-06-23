@@ -3,14 +3,33 @@ package co.istad.smartserve.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
+/**
+ * Security configuration for SmartServe API.
+ * Handles JWT authentication, authorization, and access control.
+ */
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+    
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthoritiesClaimName("authorities");
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return converter;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(endpoints -> endpoints
                 .requestMatchers(
@@ -54,6 +73,17 @@ public class SecurityConfig {
                         "/api/v1/menu-items/**"
                 ).permitAll()
                 .anyRequest().authenticated()
+        )
+        .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        )
+        .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint((request, response, ex) -> {
+                    response.sendError(401, "Unauthorized");
+                })
+                .accessDeniedHandler((request, response, ex) -> {
+                    response.sendError(403, "Forbidden");
+                })
         );
         return http.build();
     }
