@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: pisethmao/smartserve-postgres:latest
+    container_name: smartserve-postgres
+    environment:
+      POSTGRES_DB: smartserve_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - smartserve_postgres_data:/var/lib/postgresql/data
+    networks:
+      - smartserve-net
+    restart: unless-stopped
+
+  smartserve-api:
+    image: pisethmao/smartserve-api:latest
+    container_name: smartserve-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: smartserve_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8082:8082"
+    networks:
+      - smartserve-net
+    restart: unless-stopped
+
+volumes:
+  smartserve_postgres_data:
+
+networks:
+  smartserve-net:
+    driver: bridge
