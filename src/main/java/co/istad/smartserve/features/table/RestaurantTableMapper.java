@@ -10,6 +10,11 @@ public interface RestaurantTableMapper {
     RestaurantTableResponse toRestaurantTableResponse(RestaurantTable restaurantTable);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "restaurant", ignore = true)
     void updateFromRequest(
             UpdateRestaurantTableRequest request,
             @MappingTarget RestaurantTable restaurantTable
