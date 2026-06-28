@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://uat-db-host:5432/smartserve_uat
+    url: jdbc:postgresql://uat-db-host:5432/smartserve-uat
     username: postgres
-    password: Piseth1711*#
+    password: qwer
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
